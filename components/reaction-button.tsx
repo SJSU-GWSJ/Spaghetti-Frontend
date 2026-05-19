@@ -14,10 +14,13 @@ interface ReactionButtonProps {
 export function ReactionButton({ emoji, label, count, onClick, className }: ReactionButtonProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isActive, setIsActive] = useState(false)
+  const [localCount, setLocalCount] = useState(count)
 
   const handleClick = () => {
     setIsAnimating(true)
-    setIsActive(true)
+    const nextActive = !isActive
+    setIsActive(nextActive)
+    setLocalCount(nextActive ? count + 1 : count)
     onClick()
     setTimeout(() => setIsAnimating(false), 200)
   }
@@ -61,7 +64,7 @@ export function ReactionButton({ emoji, label, count, onClick, className }: Reac
         {getEmojiDisplay(emoji)}
       </span>
       <span className="hidden sm:inline font-medium">{getFullLabel(emoji, label)}</span>
-      <span className="font-bold tabular-nums">{count}</span>
+      <span className="font-bold tabular-nums">{localCount}</span>
     </button>
   )
 }
