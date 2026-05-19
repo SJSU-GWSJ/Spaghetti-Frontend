@@ -32,9 +32,9 @@ const mockPosts: Post[] = [
   return 결과 ? 결과 : x ? x : 0;
 }`,
     caption: "이거 리팩토링하면 왜 안 돌아가는지 아시는 분?",
-    timestamp: "2시간 전",
-    reactions: { f: 42, felt: 89, keyboard: 156, idea: 12 },
-    comments: 23
+    timestamp: "방금 전",
+    reactions: { f: 0, felt: 0, keyboard: 0, idea: 0 },
+    comments: 0
   },
   {
     id: "2",

@@ -40,7 +40,7 @@ const mockComments: Comment[] = [
 
 export function PostDetailModal({ post, onClose, onReaction }: PostDetailModalProps) {
   const [comment, setComment] = useState("")
-  const [comments, setComments] = useState(mockComments)
+  const [comments, setComments] = useState(post.comments > 0 ? mockComments : [])
   const isSpaghetti = post.mode === "spaghetti"
 
   useEffect(() => {
