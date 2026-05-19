@@ -117,15 +117,26 @@ export default function Home() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [posts, setPosts] = useState(mockPosts)
+  const [userReactions, setUserReactions] = useState<Record<string, string[]>>({})
 
   const handleReaction = (postId: string, reaction: keyof Post["reactions"]) => {
+    const postReactions = userReactions[postId] || []
+    const hasReacted = postReactions.includes(reaction)
+
+    setUserReactions(prev => ({
+      ...prev,
+      [postId]: hasReacted
+        ? postReactions.filter(r => r !== reaction)
+        : [...postReactions, reaction]
+    }))
+
     setPosts(prev => prev.map(post => {
       if (post.id === postId) {
         return {
           ...post,
           reactions: {
             ...post.reactions,
-            [reaction]: post.reactions[reaction] + 1
+            [reaction]: post.reactions[reaction] + (hasReacted ? -1 : 1)
           }
         }
       }
@@ -147,9 +158,10 @@ export default function Home() {
         <div className="w-full flex flex-col items-center">
           {posts.map(post => (
             <div key={post.id} className="reel-item">
-              <PostCard 
+              <PostCard
                 post={post}
                 onReaction={handleReaction}
+                activeReactions={userReactions[post.id] || []}
                 onClick={() => setSelectedPost(post)}
               />
             </div>

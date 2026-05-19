@@ -7,10 +7,11 @@ import { cn } from "@/lib/utils"
 interface PostCardProps {
   post: Post
   onReaction: (postId: string, reaction: keyof Post["reactions"]) => void
+  activeReactions: string[]
   onClick: () => void
 }
 
-export function PostCard({ post, onReaction, onClick }: PostCardProps) {
+export function PostCard({ post, onReaction, activeReactions, onClick }: PostCardProps) {
   const isSpaghetti = post.mode === "spaghetti"
 
   return (
@@ -80,9 +81,14 @@ export function PostCard({ post, onReaction, onClick }: PostCardProps) {
         
         {/* F Reaction */}
         <div className="flex flex-col items-center gap-1">
-          <button 
+          <button
             onClick={() => onReaction(post.id, "f")}
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl font-bold text-white hover:scale-110 transition-transform active:scale-95"
+            className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold hover:scale-110 transition-transform active:scale-95",
+              activeReactions.includes("f")
+                ? "bg-primary text-black border-2 border-primary"
+                : "glass text-white"
+            )}
           >
             F
           </button>
@@ -91,9 +97,14 @@ export function PostCard({ post, onReaction, onClick }: PostCardProps) {
 
         {/* Keyboard Reaction */}
         <div className="flex flex-col items-center gap-1">
-          <button 
+          <button
             onClick={() => onReaction(post.id, "keyboard")}
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:scale-110 transition-transform active:scale-95"
+            className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-110 transition-transform active:scale-95",
+              activeReactions.includes("keyboard")
+                ? "bg-primary text-black border-2 border-primary"
+                : "glass"
+            )}
           >
             ⌨️
           </button>
@@ -102,9 +113,14 @@ export function PostCard({ post, onReaction, onClick }: PostCardProps) {
 
         {/* Me Too Reaction */}
         <div className="flex flex-col items-center gap-1">
-          <button 
+          <button
             onClick={() => onReaction(post.id, "felt")}
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-[10px] font-black text-white leading-tight hover:scale-110 transition-transform active:scale-95"
+            className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center text-[10px] font-black leading-tight hover:scale-110 transition-transform active:scale-95",
+              activeReactions.includes("felt")
+                ? "bg-primary text-black border-2 border-primary"
+                : "glass text-white"
+            )}
           >
             ME<br/>TOO
           </button>
@@ -113,11 +129,16 @@ export function PostCard({ post, onReaction, onClick }: PostCardProps) {
 
         {/* Idea (Lightbulb) Reaction */}
         <div className="flex flex-col items-center gap-1">
-          <button 
+          <button
             onClick={() => onReaction(post.id, "idea")}
-            className="w-12 h-12 glass rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
+            className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95",
+              activeReactions.includes("idea")
+                ? "bg-primary border-2 border-primary"
+                : "glass"
+            )}
           >
-            <Lightbulb className="w-6 h-6 text-primary" />
+            <Lightbulb className={cn("w-6 h-6", activeReactions.includes("idea") ? "text-black" : "text-primary")} />
           </button>
           <span className="text-xs text-white font-bold text-shadow">{post.reactions.idea}</span>
         </div>
