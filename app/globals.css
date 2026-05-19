@@ -75,7 +75,12 @@
   
   /* Reels-style Scroll Snapping */
   .reels-container {
-    @apply h-screen overflow-y-scroll snap-y snap-mandatory scrollbar-none;
+    @apply h-screen overflow-y-scroll snap-y snap-mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .reels-container::-webkit-scrollbar {
+    display: none;
   }
   
   .reel-item {
