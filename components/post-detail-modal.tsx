@@ -176,7 +176,7 @@ export function PostDetailModal({ post, onClose, onReaction }: PostDetailModalPr
                 type="text"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSubmitComment()}
+                onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && handleSubmitComment()}
                 placeholder="댓글 달기..."
                 className="flex-1 px-3 py-2 bg-transparent text-sm text-white focus:outline-none placeholder:text-white/20"
               />
