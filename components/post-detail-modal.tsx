@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import type { Post, Comment } from "@/lib/types"
 import { ReactionButton } from "./reaction-button"
-import { X, Send } from "lucide-react"
+import { X, Send, MoreHorizontal } from "lucide-react"
 
 interface PostDetailModalProps {
   post: Post
@@ -73,141 +73,131 @@ export function PostDetailModal({ post, onClose, onReaction }: PostDetailModalPr
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-text-ink/40 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md flex items-center justify-center p-0 md:p-4 animate-fade-in"
       onClick={onClose}
     >
       <div 
-        className="bg-card rounded-lg border border-border max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slide-up"
+        className="bg-zinc-950 border border-white/10 w-full max-w-5xl h-full md:h-[80vh] md:rounded-2xl overflow-hidden flex flex-col md:flex-row animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md bg-bg-surface flex items-center justify-center text-text-secondary font-medium text-sm">
-              {post.author.avatar}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm text-text-primary">@{post.author.username}</span>
-                <span className="px-1.5 py-0.5 bg-bg-surface text-text-muted text-xs rounded">
-                  {post.author.title}
-                </span>
-              </div>
-              <span className="text-xs text-text-muted">{post.timestamp}</span>
-            </div>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-1.5 hover:bg-bg-surface rounded-sm transition-colors"
-          >
-            <X className="w-4 h-4 text-text-muted" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-180px)]">
-          {/* Code Block */}
-          <div className="p-4">
-            <div 
-              className={`rounded-sm overflow-hidden border-l-[3px] ${
-                isSpaghetti 
-                  ? "bg-bg-surface border-brand" 
-                  : "bg-error-bg border-error-border"
-              }`}
-            >
-              <pre className="p-4 overflow-x-auto text-xs font-mono leading-relaxed">
-                <code className={isSpaghetti ? "text-text-strong" : "text-error-text"}>
+        {/* Left Side: Code Block (Visual focus) */}
+        <div className="flex-1 bg-black/40 relative border-r border-white/5 overflow-hidden flex flex-col">
+          <div className="flex-1 p-6 overflow-y-auto scrollbar-none flex items-center justify-center">
+            <div className={`w-full glass p-6 rounded-2xl border-2 transition-colors ${
+              isSpaghetti ? "border-primary/20" : "border-destructive/20"
+            }`}>
+              <pre className="text-xs md:text-sm font-mono leading-relaxed overflow-x-auto scrollbar-none">
+                <code className={isSpaghetti ? "text-primary" : "text-destructive"}>
                   {post.content}
                 </code>
               </pre>
             </div>
           </div>
+          
+          {/* Mobile Only Header */}
+          <div className="md:hidden absolute top-0 left-0 right-0 p-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent">
+             <button onClick={onClose} className="p-2 bg-black/40 rounded-full text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
-          {/* Caption */}
-          {post.caption && (
-            <div className="px-4 pb-4">
-              <p className="text-sm text-text-primary">{post.caption}</p>
+        {/* Right Side: Info & Comments */}
+        <div className="w-full md:w-[400px] flex flex-col bg-zinc-900/50">
+          {/* Header */}
+          <div className="p-4 border-b border-white/5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-black font-bold">
+                {post.author.avatar}
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-sm text-white">@{post.author.username}</span>
+                <span className="text-[10px] text-white/40">{post.timestamp}</span>
+              </div>
             </div>
-          )}
-
-          {/* Reactions */}
-          <div className="px-4 pb-4 flex items-center gap-1.5 flex-wrap">
-            <ReactionButton
-              emoji="F"
-              label="F"
-              count={post.reactions.f}
-              onClick={() => onReaction(post.id, "f")}
-            />
-            <ReactionButton
-              emoji="felt"
-              label="나도 당해봄"
-              count={post.reactions.felt}
-              onClick={() => onReaction(post.id, "felt")}
-            />
-            <ReactionButton
-              emoji="keyboard"
-              label="키보드 압수"
-              count={post.reactions.keyboard}
-              onClick={() => onReaction(post.id, "keyboard")}
-            />
-            <ReactionButton
-              emoji="idea"
-              label="신박한데?"
-              count={post.reactions.idea}
-              onClick={() => onReaction(post.id, "idea")}
-            />
+            <button className="p-2 text-white/40 hover:text-white transition-colors">
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Comments */}
-          <div className="border-t border-border">
-            <div className="px-4 py-3 border-b border-border">
-              <span className="font-medium text-sm text-text-heading">댓글 {comments.length}</span>
+          {/* Caption & Comments Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-none">
+            {/* Caption */}
+            {post.caption && (
+              <div className="pb-4 border-b border-white/5">
+                <p className="text-sm text-white leading-relaxed">{post.caption}</p>
+              </div>
+            )}
+
+            {/* Reactions in Detail */}
+            <div className="flex flex-wrap gap-2">
+               <ReactionButton
+                emoji="F" label="F" count={post.reactions.f}
+                onClick={() => onReaction(post.id, "f")}
+              />
+              <ReactionButton
+                emoji="felt" label="Me Too" count={post.reactions.felt}
+                onClick={() => onReaction(post.id, "felt")}
+              />
+              <ReactionButton
+                emoji="keyboard" label="압수" count={post.reactions.keyboard}
+                onClick={() => onReaction(post.id, "keyboard")}
+              />
+              <ReactionButton
+                emoji="idea" label="신박한데?" count={post.reactions.idea}
+                onClick={() => onReaction(post.id, "idea")}
+              />
             </div>
-            
-            <div className="p-4 space-y-4">
+
+            {/* Comments List */}
+            <div className="space-y-4 pt-4">
+              <p className="text-xs font-bold text-white/40 uppercase tracking-widest">댓글 {comments.length}</p>
               {comments.map((c) => (
-                <div key={c.id} className="flex gap-3">
-                  <div className="w-7 h-7 rounded-md bg-bg-surface flex items-center justify-center text-text-muted font-medium text-xs shrink-0">
+                <div key={c.id} className="flex gap-3 animate-fade-in">
+                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/60 font-medium text-xs shrink-0 border border-white/10">
                     {c.author.avatar}
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-text-primary">@{c.author.username}</span>
-                      <span className="text-xs text-text-muted">{c.timestamp}</span>
+                      <span className="font-bold text-xs text-white">@{c.author.username}</span>
+                      <span className="text-[10px] text-white/40">{c.timestamp}</span>
                     </div>
-                    <p className="text-sm text-text-secondary mt-0.5">{c.content}</p>
+                    <p className="text-sm text-white/80 mt-1 leading-snug">{c.content}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Comment Input */}
-        <div className="px-4 py-3 border-t border-border bg-bg-surface">
-          <div className="flex gap-3">
-            <div className="w-7 h-7 rounded-md bg-card border border-border flex items-center justify-center text-text-secondary font-medium text-xs shrink-0">
-              D
-            </div>
-            <div className="flex-1 flex gap-2">
+          {/* Comment Input */}
+          <div className="p-4 border-t border-white/5 bg-black/40">
+            <div className="flex gap-3 bg-white/5 rounded-xl border border-white/10 p-1 focus-within:border-primary/50 transition-colors">
               <input
                 type="text"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmitComment()}
-                placeholder="위로 또는 조롱을 입력하세요..."
-                className="flex-1 px-3 py-1.5 bg-card border border-border rounded-sm text-sm focus:outline-none focus:border-border-default placeholder:text-text-muted"
+                placeholder="댓글 달기..."
+                className="flex-1 px-3 py-2 bg-transparent text-sm text-white focus:outline-none placeholder:text-white/20"
               />
               <button
                 onClick={handleSubmitComment}
                 disabled={!comment.trim()}
-                className="px-3 py-1.5 bg-brand text-brand-dark rounded-sm text-sm font-medium hover:brightness-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 text-primary hover:scale-110 active:scale-95 transition-all disabled:opacity-0"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               </button>
             </div>
           </div>
         </div>
+
+        {/* Desktop Close Button */}
+        <button 
+          onClick={onClose}
+          className="hidden md:block absolute top-4 right-4 p-2 bg-black/40 hover:bg-black/60 rounded-full text-white transition-all hover:scale-110"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </div>
     </div>
   )

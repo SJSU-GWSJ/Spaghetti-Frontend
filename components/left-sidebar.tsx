@@ -1,139 +1,76 @@
 "use client"
 
-import type { FeedMode } from "@/lib/types"
-import { Settings, Code2, AlertTriangle, Trophy, Keyboard } from "lucide-react"
+import { Settings, Home, Search, PlusSquare, User, Bell } from "lucide-react"
 
 interface LeftSidebarProps {
-  activeMode: FeedMode
-  onModeChange: (mode: FeedMode) => void
+  activeMode: string
+  onModeChange: (mode: any) => void
   onUploadClick: () => void
 }
 
-export function LeftSidebar({ activeMode, onModeChange, onUploadClick }: LeftSidebarProps) {
+export function LeftSidebar({ onUploadClick }: LeftSidebarProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 bottom-0 w-60 bg-card border-r border-border">
+      <aside className="hidden lg:flex flex-col fixed left-0 top-0 bottom-0 w-20 xl:w-60 bg-black border-r border-white/10 z-50">
         {/* Logo */}
-        <div className="p-5 border-b border-border">
-          <h1 className="font-mono font-bold text-lg text-text-heading">OOPS</h1>
-          <p className="text-xs text-text-muted mt-0.5">Object-Oriented Pain Sharing</p>
+        <div className="p-6 xl:p-8">
+          <h1 className="font-logo text-3xl xl:text-4xl text-primary tracking-tighter xl:block hidden">SPAGHETTI</h1>
+          <h1 className="font-logo text-3xl text-primary xl:hidden block">S</h1>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-6">
-          {/* Feed Section */}
-          <div>
-            <p className="px-3 text-[10px] font-medium uppercase tracking-wider text-text-muted mb-2">피드</p>
-            <div className="space-y-0.5">
-              <button
-                onClick={() => onModeChange("spaghetti")}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors rounded-sm ${
-                  activeMode === "spaghetti"
-                    ? "bg-bg-surface text-text-ink border-l-[3px] border-brand -ml-px"
-                    : "text-text-secondary hover:bg-bg-surface hover:text-text-primary"
-                }`}
-              >
-                <Code2 className="w-4 h-4" />
-                <span>스파게티 모드</span>
-              </button>
-              <button
-                onClick={() => onModeChange("404")}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors rounded-sm ${
-                  activeMode === "404"
-                    ? "bg-bg-surface text-text-ink border-l-[3px] border-brand -ml-px"
-                    : "text-text-secondary hover:bg-bg-surface hover:text-text-primary"
-                }`}
-              >
-                <AlertTriangle className="w-4 h-4" />
-                <span>404 모드</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Community Section */}
-          <div>
-            <p className="px-3 text-[10px] font-medium uppercase tracking-wider text-text-muted mb-2">커뮤니티</p>
-            <div className="space-y-0.5">
-              <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-text-secondary hover:bg-bg-surface hover:text-text-primary transition-colors rounded-sm">
-                <Keyboard className="w-4 h-4" />
-                <span>명예의 전당</span>
-              </button>
-              <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-text-secondary hover:bg-bg-surface hover:text-text-primary transition-colors rounded-sm">
-                <Trophy className="w-4 h-4" />
-                <span>칭호 보유자</span>
-              </button>
-            </div>
-          </div>
-
-          {/* New Post Button */}
-          <div className="px-1">
-            <button
-              onClick={onUploadClick}
-              className="w-full py-2.5 bg-brand text-brand-dark font-medium text-sm rounded-sm hover:brightness-95 transition-all"
-            >
-              + 새 글
-            </button>
-          </div>
+        <nav className="flex-1 px-3 space-y-2">
+          <NavItem icon={<Home className="w-6 h-6" />} label="홈" active />
+          <NavItem icon={<Search className="w-6 h-6" />} label="검색" />
+          <NavItem icon={<Bell className="w-6 h-6" />} label="알림" />
+          <button
+            onClick={onUploadClick}
+            className="w-full flex items-center gap-4 px-4 py-3 text-white hover:bg-white/10 transition-all rounded-xl group"
+          >
+            <PlusSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-lg xl:block hidden">만들기</span>
+          </button>
+          <NavItem icon={<User className="w-6 h-6" />} label="프로필" />
         </nav>
 
         {/* User Area */}
-        <div className="p-3 border-t border-border">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="w-8 h-8 rounded-md bg-bg-surface flex items-center justify-center text-text-secondary font-medium text-sm">
-              D
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-text-primary truncate">dev_user</p>
-              <p className="text-xs text-text-muted truncate">초보 개발자</p>
-            </div>
-            <button className="p-1.5 text-text-muted hover:text-text-secondary hover:bg-bg-surface rounded-sm transition-colors">
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
+        <div className="p-4 xl:p-6 border-t border-white/10">
+          <button className="w-full flex items-center gap-4 px-3 py-2 text-white hover:bg-white/10 transition-colors rounded-xl">
+            <Settings className="w-6 h-6" />
+            <span className="font-medium xl:block hidden">설정</span>
+          </button>
         </div>
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-40 pb-safe">
-        <div className="flex items-center justify-around py-2">
-          <button
-            onClick={() => onModeChange("spaghetti")}
-            className={`flex flex-col items-center gap-1 px-4 py-2 text-xs transition-colors ${
-              activeMode === "spaghetti" ? "text-brand-dark" : "text-text-muted"
-            }`}
-          >
-            <div className="relative">
-              <Code2 className="w-5 h-5" />
-              {activeMode === "spaghetti" && (
-                <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-brand rounded-full" />
-              )}
-            </div>
-            <span>스파게티</span>
-          </button>
-          <button
-            onClick={() => onModeChange("404")}
-            className={`flex flex-col items-center gap-1 px-4 py-2 text-xs transition-colors ${
-              activeMode === "404" ? "text-brand-dark" : "text-text-muted"
-            }`}
-          >
-            <div className="relative">
-              <AlertTriangle className="w-5 h-5" />
-              {activeMode === "404" && (
-                <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-brand rounded-full" />
-              )}
-            </div>
-            <span>404</span>
-          </button>
-          <button
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/10 z-50 pb-safe">
+        <div className="flex items-center justify-around py-3">
+          <button className="p-2 text-white"><Home className="w-6 h-6" /></button>
+          <button className="p-2 text-white/60"><Search className="w-6 h-6" /></button>
+          <button 
             onClick={onUploadClick}
-            className="flex flex-col items-center gap-1 px-4 py-2 text-xs text-brand-dark"
+            className="p-2 text-primary scale-125 transition-transform active:scale-100"
           >
-            <span className="w-8 h-8 bg-brand rounded-sm flex items-center justify-center text-lg font-medium">+</span>
-            <span>새 글</span>
+            <PlusSquare className="w-7 h-7" />
           </button>
+          <button className="p-2 text-white/60"><Bell className="w-6 h-6" /></button>
+          <button className="p-2 text-white/60"><User className="w-6 h-6" /></button>
         </div>
       </nav>
     </>
+  )
+}
+
+function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
+  return (
+    <button className={`w-full flex items-center gap-4 px-4 py-3 transition-all rounded-xl group ${
+      active ? "text-white" : "text-white/60 hover:text-white hover:bg-white/10"
+    }`}>
+      <div className="group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
+      <span className={`font-medium text-lg xl:block hidden ${active ? "font-bold" : ""}`}>{label}</span>
+    </button>
   )
 }

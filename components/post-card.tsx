@@ -1,8 +1,8 @@
 "use client"
 
 import type { Post } from "@/lib/types"
-import { ReactionButton } from "./reaction-button"
-import { MessageCircle, Share2 } from "lucide-react"
+import { MessageCircle, MoreHorizontal, Lightbulb } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface PostCardProps {
   post: Post
@@ -15,105 +15,124 @@ export function PostCard({ post, onReaction, onClick }: PostCardProps) {
 
   return (
     <article 
-      className="bg-card rounded-md border border-border overflow-hidden cursor-pointer hover:border-border-default transition-colors animate-fade-in"
+      className="relative h-full w-full max-w-[450px] aspect-[9/16] lg:h-[90vh] lg:rounded-2xl overflow-hidden bg-black flex flex-col shadow-2xl animate-slide-up"
       onClick={onClick}
     >
-      {/* Header */}
-      <div className="px-4 pt-4 pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-md bg-bg-surface flex items-center justify-center text-text-secondary font-medium text-sm">
-              {post.author.avatar}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm text-text-primary">@{post.author.username}</span>
-                <span className="px-1.5 py-0.5 bg-bg-surface text-text-secondary text-xs rounded">
-                  {post.author.title}
-                </span>
-              </div>
-              <span className="text-xs text-text-muted">{post.timestamp}</span>
-            </div>
+      {/* Code/Error Content Area - Background */}
+      <div className="absolute inset-0 z-0">
+        <div className={`h-full w-full p-6 pt-20 flex items-center justify-center ${
+          isSpaghetti ? "bg-zinc-900/50" : "bg-red-950/20"
+        }`}>
+          <div className="w-full max-h-[70%] overflow-hidden rounded-xl glass p-4">
+             <pre className="text-[11px] md:text-xs font-mono leading-relaxed overflow-x-auto scrollbar-none">
+              <code className={isSpaghetti ? "text-primary" : "text-destructive"}>
+                {post.content}
+              </code>
+            </pre>
           </div>
-          
-          {/* Mode Badge */}
-          <span className={`px-2 py-1 text-xs rounded font-medium ${
-            isSpaghetti 
-              ? "bg-bg-surface text-text-secondary" 
-              : "bg-error-bg text-error-text"
-          }`}>
-            {isSpaghetti ? "스파게티" : "404"}
-          </span>
         </div>
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
       </div>
 
-      {/* Code/Error Block */}
-      <div className="px-4 pb-3">
-        <div 
-          className={`rounded-sm overflow-hidden border-l-[3px] ${
-            isSpaghetti 
-              ? "bg-bg-surface border-brand" 
-              : "bg-error-bg border-error-border"
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <pre className="p-3 overflow-x-auto text-xs font-mono leading-relaxed">
-            <code className={isSpaghetti ? "text-text-strong" : "text-error-text"}>
-              {post.content.length > 400 
-                ? post.content.slice(0, 400) + "\n..." 
-                : post.content}
-            </code>
-          </pre>
+      {/* Top Header - User Info */}
+      <div className="absolute top-0 left-0 right-0 p-4 z-10 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold border-2 border-white/10">
+            {post.author.avatar}
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-sm text-white text-shadow">@{post.author.username}</span>
+              <span className="px-2 py-0.5 bg-primary/20 backdrop-blur-md text-primary text-[10px] rounded-full border border-primary/30">
+                {post.author.title}
+              </span>
+            </div>
+            <span className="text-[10px] text-white/60 text-shadow">{post.timestamp}</span>
+          </div>
         </div>
+        <button className="p-2 text-white/80 hover:text-white transition-colors">
+          <MoreHorizontal className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* Caption */}
-      {post.caption && (
-        <div className="px-4 pb-3">
-          <p className="text-sm text-text-primary">{post.caption}</p>
-        </div>
-      )}
+      {/* Bottom Info Area */}
+      <div className="absolute bottom-0 left-0 right-0 p-5 z-10 pr-20">
+        {/* Caption */}
+        {post.caption && (
+          <p className="text-sm md:text-base text-white leading-snug text-shadow font-medium mb-2">
+            {post.caption}
+          </p>
+        )}
+        
+        {/* Mode Indicator Tag */}
+        <span className={cn(
+          "px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-widest",
+          isSpaghetti ? "bg-primary text-black" : "bg-destructive text-white"
+        )}>
+          {post.mode}
+        </span>
+      </div>
 
-      {/* Reactions */}
-      <div className="px-4 py-3 border-t border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <ReactionButton
-              emoji="F"
-              label="F"
-              count={post.reactions.f}
-              onClick={() => onReaction(post.id, "f")}
-            />
-            <ReactionButton
-              emoji="felt"
-              label="나도 당해봄"
-              count={post.reactions.felt}
-              onClick={() => onReaction(post.id, "felt")}
-            />
-            <ReactionButton
-              emoji="keyboard"
-              label="키보드 압수"
-              count={post.reactions.keyboard}
-              onClick={() => onReaction(post.id, "keyboard")}
-            />
-            <ReactionButton
-              emoji="idea"
-              label="신박한데?"
-              count={post.reactions.idea}
-              onClick={() => onReaction(post.id, "idea")}
-            />
-          </div>
-          
-          <div className="flex items-center gap-2 text-text-muted">
-            <button className="flex items-center gap-1 text-xs hover:text-text-secondary transition-colors">
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>{post.comments}</span>
-            </button>
-            <button className="flex items-center gap-1 text-xs hover:text-text-secondary transition-colors">
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
+      {/* Vertical Action Bar (Reels Style) - Moved Lower and Reordered */}
+      <div className="absolute bottom-6 right-4 z-20 flex flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
+        
+        {/* F Reaction */}
+        <div className="flex flex-col items-center gap-1">
+          <button 
+            onClick={() => onReaction(post.id, "f")}
+            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl font-bold text-white hover:scale-110 transition-transform active:scale-95"
+          >
+            F
+          </button>
+          <span className="text-xs text-white font-bold text-shadow">{post.reactions.f}</span>
         </div>
+
+        {/* Keyboard Reaction */}
+        <div className="flex flex-col items-center gap-1">
+          <button 
+            onClick={() => onReaction(post.id, "keyboard")}
+            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:scale-110 transition-transform active:scale-95"
+          >
+            ⌨️
+          </button>
+          <span className="text-xs text-white font-bold text-shadow">{post.reactions.keyboard}</span>
+        </div>
+
+        {/* Me Too Reaction */}
+        <div className="flex flex-col items-center gap-1">
+          <button 
+            onClick={() => onReaction(post.id, "felt")}
+            className="w-12 h-12 glass rounded-full flex items-center justify-center text-[10px] font-black text-white leading-tight hover:scale-110 transition-transform active:scale-95"
+          >
+            ME<br/>TOO
+          </button>
+          <span className="text-xs text-white font-bold text-shadow">{post.reactions.felt}</span>
+        </div>
+
+        {/* Idea (Lightbulb) Reaction */}
+        <div className="flex flex-col items-center gap-1">
+          <button 
+            onClick={() => onReaction(post.id, "idea")}
+            className="w-12 h-12 glass rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
+          >
+            <Lightbulb className="w-6 h-6 text-primary" />
+          </button>
+          <span className="text-xs text-white font-bold text-shadow">{post.reactions.idea}</span>
+        </div>
+
+        {/* Comment Button - AT THE BOTTOM */}
+        <div className="flex flex-col items-center gap-1">
+          <button 
+            onClick={onClick}
+            className="w-12 h-12 glass rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
+          >
+            <MessageCircle className="w-6 h-6 text-white" />
+          </button>
+          <span className="text-xs text-white font-bold text-shadow">{post.comments}</span>
+        </div>
+
       </div>
     </article>
   )

@@ -1,39 +1,41 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Analytics } from '@vercel/analytics/next'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: '--font-inter'
+const cookieRun = localFont({
+  src: [
+    {
+      path: '../public/fonts/CookieRunFont_OTF/CookieRun Regular.otf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/CookieRunFont_OTF/CookieRun Bold.otf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/CookieRunFont_OTF/CookieRun Black.otf',
+      weight: '900',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-cookierun',
+  fallback: ['system-ui', 'sans-serif']
 })
 
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ["latin"],
-  variable: '--font-jetbrains'
+const supersonicRocketship = localFont({
+  src: '../public/fonts/Supersonic Rocketship.ttf',
+  variable: '--font-logo',
+  fallback: ['cursive']
 })
 
 export const metadata: Metadata = {
-  title: 'OOPS - Object-Oriented Pain Sharing',
+  title: 'SPAGHETTI - Object-Oriented Pain Sharing',
   description: '자랑할 수 없다면, 장렬하게 망한 걸 공유하자.',
   generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
 }
 
 export default function RootLayout({
@@ -42,9 +44,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko" className="bg-background">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        {children}
+    <html lang="ko" className="dark" style={{ colorScheme: 'dark' }}>
+      <body className={`${cookieRun.variable} ${supersonicRocketship.variable} font-sans antialiased bg-black text-white`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" forceTheme="dark">
+          {children}
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

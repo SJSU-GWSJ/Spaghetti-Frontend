@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import type { Post, FeedMode } from "@/lib/types"
-import { X, Upload } from "lucide-react"
+import { X, Upload, Code2, AlertTriangle } from "lucide-react"
 
 interface UploadModalProps {
   onClose: () => void
@@ -60,55 +60,57 @@ export function UploadModal({ onClose, onSubmit }: UploadModalProps) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-text-ink/40 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
     >
       <div 
-        className="bg-card rounded-lg border border-border max-w-xl w-full overflow-hidden animate-slide-up"
+        className="bg-zinc-900 border border-white/10 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h2 className="font-medium text-sm text-text-heading">새 글 올리기</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+          <h2 className="text-lg font-bold text-white">망한 코드 공유하기</h2>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-bg-surface rounded-sm transition-colors"
+            className="p-2 hover:bg-white/10 rounded-full transition-colors"
           >
-            <X className="w-4 h-4 text-text-muted" />
+            <X className="w-5 h-5 text-white/60" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-6">
           {/* Mode Selector */}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={() => setMode("spaghetti")}
-              className={`flex-1 py-2 text-sm font-medium transition-colors rounded-sm border ${
+              className={`flex-1 py-3 px-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
                 isSpaghetti
-                  ? "bg-bg-surface border-border-default text-text-primary"
-                  : "bg-card border-border text-text-muted hover:border-border-default"
+                  ? "bg-primary/10 border-primary text-primary"
+                  : "bg-black/20 border-white/5 text-white/40 hover:border-white/20"
               }`}
             >
-              스파게티 모드
+              <Code2 className="w-6 h-6" />
+              <span className="text-xs font-bold uppercase tracking-wider">스파게티</span>
             </button>
             <button
               onClick={() => setMode("404")}
-              className={`flex-1 py-2 text-sm font-medium transition-colors rounded-sm border ${
+              className={`flex-1 py-3 px-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
                 !isSpaghetti
-                  ? "bg-error-bg border-error-border text-error-text"
-                  : "bg-card border-border text-text-muted hover:border-border-default"
+                  ? "bg-destructive/10 border-destructive text-destructive"
+                  : "bg-black/20 border-white/5 text-white/40 hover:border-white/20"
               }`}
             >
-              404 모드
+              <AlertTriangle className="w-6 h-6" />
+              <span className="text-xs font-bold uppercase tracking-wider">404 에러</span>
             </button>
           </div>
 
           {/* Code/Error Textarea */}
-          <div className={`rounded-sm overflow-hidden border ${
+          <div className={`rounded-xl overflow-hidden border-2 transition-colors ${
             isSpaghetti 
-              ? "bg-bg-surface border-border" 
-              : "bg-error-bg border-error-border"
+              ? "bg-black/40 border-primary/20 focus-within:border-primary/50" 
+              : "bg-black/40 border-destructive/20 focus-within:border-destructive/50"
           }`}>
             <textarea
               value={content}
@@ -117,8 +119,8 @@ export function UploadModal({ onClose, onSubmit }: UploadModalProps) {
                 ? "// 돌아가긴 하는데... 왜 돌아가는지는 묻지 마세요"
                 : "[ERROR] java.lang.NullPointerException: 또 너야..."
               }
-              className={`w-full h-44 p-3 bg-transparent font-mono text-xs resize-none focus:outline-none placeholder:text-text-muted leading-relaxed ${
-                isSpaghetti ? "text-text-strong" : "text-error-text"
+              className={`w-full h-48 p-4 bg-transparent font-mono text-sm resize-none focus:outline-none placeholder:text-white/20 leading-relaxed ${
+                isSpaghetti ? "text-primary" : "text-destructive"
               }`}
             />
           </div>
@@ -128,28 +130,25 @@ export function UploadModal({ onClose, onSubmit }: UploadModalProps) {
             <textarea
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              placeholder="한 마디 남기기 (선택)"
-              className="w-full h-16 p-3 bg-bg-surface border border-border rounded-sm text-sm resize-none focus:outline-none focus:border-border-default placeholder:text-text-muted"
+              placeholder="무슨 일이 있었나요?"
+              className="w-full h-20 p-4 bg-black/40 border-2 border-white/5 rounded-xl text-white text-sm resize-none focus:outline-none focus:border-white/20 placeholder:text-white/20"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-border">
+        <div className="px-6 py-4 bg-black/20 border-t border-white/5">
           <button
             onClick={handleSubmit}
             disabled={!content.trim() || isSubmitting}
-            className="w-full py-2.5 bg-brand text-brand-dark rounded-sm font-medium text-sm hover:brightness-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-4 bg-primary text-black rounded-xl font-bold text-base hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
           >
             {isSubmitting ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-brand-dark/30 border-t-brand-dark rounded-full animate-spin" />
-                업로드 중...
-              </>
+              <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-full animate-spin" />
             ) : (
               <>
-                <Upload className="w-3.5 h-3.5" />
-                장렬하게 올리기
+                <Upload className="w-5 h-5" />
+                장렬하게 업로드
               </>
             )}
           </button>

@@ -1,15 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface ReactionButtonProps {
   emoji: string
   label: string
   count: number
   onClick: () => void
+  className?: string
 }
 
-export function ReactionButton({ emoji, label, count, onClick }: ReactionButtonProps) {
+export function ReactionButton({ emoji, label, count, onClick, className }: ReactionButtonProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isActive, setIsActive] = useState(false)
 
@@ -20,23 +22,46 @@ export function ReactionButton({ emoji, label, count, onClick }: ReactionButtonP
     setTimeout(() => setIsAnimating(false), 200)
   }
 
+  const getEmojiDisplay = (emoji: string) => {
+    switch (emoji) {
+      case "F": return "F"
+      case "felt": return "Me Too"
+      case "keyboard": return "⌨️"
+      case "idea": return "💡"
+      default: return emoji
+    }
+  }
+
+  const getFullLabel = (emoji: string, label: string) => {
+    switch (emoji) {
+      case "F": return "조의를 표하십시오"
+      case "felt": return "나도 당해봄"
+      case "keyboard": return "키보드 압수"
+      case "idea": return "오... 신박한데?"
+      default: return label
+    }
+  }
+
   return (
     <button
       onClick={handleClick}
-      className={`group flex items-center gap-1 px-2 py-1 rounded text-xs transition-all ${
+      className={cn(
+        "group flex items-center gap-2 px-3 py-1.5 rounded-full text-xs transition-all border border-white/5",
         isActive
-          ? "bg-brand-subtle border border-brand text-brand-dark"
-          : "bg-bg-surface border border-transparent text-text-secondary hover:border-border-default hover:text-text-primary"
-      } ${isAnimating ? "animate-pop" : ""}`}
+          ? "bg-primary text-black border-primary shadow-lg shadow-primary/20"
+          : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white hover:border-white/20",
+        isAnimating ? "scale-110" : "scale-100",
+        className
+      )}
     >
-      <span className={`font-mono ${isAnimating ? "scale-110" : ""} transition-transform`}>
-        {emoji === "F" && "F"}
-        {emoji === "felt" && "T_T"}
-        {emoji === "keyboard" && "kbd"}
-        {emoji === "idea" && "!"}
+      <span className={cn(
+        "text-sm",
+        isAnimating ? "animate-pop" : ""
+      )}>
+        {getEmojiDisplay(emoji)}
       </span>
-      <span className="hidden sm:inline">{label}</span>
-      <span className="font-medium tabular-nums">{count}</span>
+      <span className="hidden sm:inline font-medium">{getFullLabel(emoji, label)}</span>
+      <span className="font-bold tabular-nums">{count}</span>
     </button>
   )
 }

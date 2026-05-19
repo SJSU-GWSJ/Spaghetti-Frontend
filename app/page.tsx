@@ -6,7 +6,7 @@ import { PostCard } from "@/components/post-card"
 import { RightSidebar } from "@/components/right-sidebar"
 import { PostDetailModal } from "@/components/post-detail-modal"
 import { UploadModal } from "@/components/upload-modal"
-import type { Post, FeedMode } from "@/lib/types"
+import type { Post } from "@/lib/types"
 
 const mockPosts: Post[] = [
   {
@@ -114,12 +114,9 @@ Stack: Maximum call stack size exceeded
 ]
 
 export default function Home() {
-  const [feedMode, setFeedMode] = useState<FeedMode>("spaghetti")
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [posts, setPosts] = useState(mockPosts)
-
-  const filteredPosts = posts.filter(post => post.mode === feedMode)
 
   const handleReaction = (postId: string, reaction: keyof Post["reactions"]) => {
     setPosts(prev => prev.map(post => {
@@ -137,49 +134,33 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen bg-black overflow-hidden flex flex-col lg:flex-row relative">
       {/* Left Sidebar - Fixed */}
       <LeftSidebar 
-        activeMode={feedMode} 
-        onModeChange={setFeedMode}
+        activeMode="spaghetti"
+        onModeChange={() => {}}
         onUploadClick={() => setShowUploadModal(true)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 ml-0 lg:ml-60">
-        <div className="max-w-[1200px] mx-auto flex">
-          {/* Main Feed */}
-          <main className="flex-1 max-w-[680px] px-4 lg:px-6 py-6">
-            <div className="space-y-4">
-              {filteredPosts.length > 0 ? (
-                filteredPosts.map(post => (
-                  <PostCard 
-                    key={post.id} 
-                    post={post}
-                    onReaction={handleReaction}
-                    onClick={() => setSelectedPost(post)}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-16 bg-card rounded-md border border-border">
-                  <p className="text-4xl mb-3">:</p>
-                  <p className="text-text-secondary text-sm">
-                    아직 아무도 망하지 않았습니다.
-                  </p>
-                  <p className="text-text-muted text-sm">
-                    첫 번째 희생자가 되어보세요.
-                  </p>
-                </div>
-              )}
+      {/* Reels Main Feed - Centered relative to the entire screen */}
+      <main className="flex-1 reels-container flex flex-col items-center">
+        <div className="w-full flex flex-col items-center">
+          {posts.map(post => (
+            <div key={post.id} className="reel-item">
+              <PostCard 
+                post={post}
+                onReaction={handleReaction}
+                onClick={() => setSelectedPost(post)}
+              />
             </div>
-          </main>
-
-          {/* Right Sidebar - Desktop Only */}
-          <aside className="hidden xl:block w-72 shrink-0 py-6 pr-6">
-            <RightSidebar />
-          </aside>
+          ))}
         </div>
-      </div>
+      </main>
+
+      {/* Right Sidebar - Fixed Position for Desktop */}
+      <aside className="hidden xl:block fixed right-0 top-0 bottom-0 w-80 p-6 border-l border-white/5 overflow-y-auto scrollbar-none z-40 bg-black">
+        <RightSidebar />
+      </aside>
 
       {/* Modals */}
       {selectedPost && (
